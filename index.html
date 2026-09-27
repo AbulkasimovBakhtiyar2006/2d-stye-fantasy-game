@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2D Town Quest Demo</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="game-area">
+        <h1>2D Town Quest Demo</h1>
+        <canvas
+          id="game-canvas"
+          width="640"
+          height="448"
+          aria-label="2D town map"
+        ></canvas>
+        <p class="controls">Move: Arrow keys / WASD &middot; Interact: E</p>
+      </section>
+      <aside class="quest-panel">
+        <h2>Quests</h2>
+        <ul id="quest-list"></ul>
+        <p id="game-message" aria-live="polite"></p>
+      </aside>
+    </main>
+    <script src="./game.js"></script>
+  </body>
+</html>

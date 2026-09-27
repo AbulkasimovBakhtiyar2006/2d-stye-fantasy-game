@@ -1,0 +1,69 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #1a1328;
+  color: #f0ebff;
+  display: grid;
+  place-items: center;
+}
+
+.game-shell {
+  width: min(1000px, 96vw);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 2fr 1fr;
+  align-items: start;
+}
+
+.game-area,
+.quest-panel {
+  background: #241a38;
+  border: 1px solid #4f3f70;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+h1,
+h2 {
+  margin-top: 0;
+}
+
+#game-canvas {
+  width: 100%;
+  max-width: 640px;
+  border: 2px solid #5b4a7c;
+  border-radius: 8px;
+  image-rendering: pixelated;
+  background: #2a2540;
+}
+
+.controls {
+  margin-bottom: 0;
+  color: #cfc5eb;
+}
+
+#quest-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+#quest-list li {
+  margin-bottom: 0.5rem;
+}
+
+#game-message {
+  min-height: 3em;
+  margin-bottom: 0;
+  color: #a8ffdc;
+}
+
+@media (max-width: 860px) {
+  .game-shell {
+    grid-template-columns: 1fr;
+  }
+}
