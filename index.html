@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emberfall - A Pixel Fantasy Tale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game" width="960" height="540" tabindex="0"></canvas>
+
+    <div id="creator" class="hidden">
+      <div class="cr-inner">
+        <h1>Create Your Hero</h1>
+        <div class="cr-grid">
+          <section class="cr-preview">
+            <canvas id="preview" width="260" height="264"></canvas>
+            <div id="cr-summary"></div>
+            <div id="cr-stats"></div>
+          </section>
+          <section class="cr-options">
+            <div class="row"><label for="cr-name">Name</label><input id="cr-name" maxlength="12" autocomplete="off" spellcheck="false"></div>
+            <div class="row"><label>Skin</label><div id="cr-skin" class="swatches"></div></div>
+            <div class="row"><label>Hair</label><div id="cr-hairstyle" class="chips"></div></div>
+            <div class="row"><label>Hair Color</label><div id="cr-haircolor" class="swatches"></div></div>
+            <div class="row"><label>Eyes</label><div id="cr-eyes" class="swatches"></div></div>
+            <div class="row"><label>Outfit</label><div id="cr-outfit" class="swatches"></div></div>
+            <h2>Class</h2>
+            <div id="cr-class" class="cards"></div>
+            <h2>Weapon <small>&#9733; = class affinity (+20% dmg)</small></h2>
+            <div id="cr-weapon" class="cards"></div>
+            <h2>Skills <small>pick 2 &middot; clicking a new one swaps out the older pick</small></h2>
+            <div id="cr-skills" class="cards"></div>
+          </section>
+        </div>
+        <div class="cr-actions">
+          <button id="cr-random" type="button">Randomize</button>
+          <button id="cr-start" type="button" class="primary">Begin Adventure &#9654;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/creator.js"></script>
+</body>
+</html>
