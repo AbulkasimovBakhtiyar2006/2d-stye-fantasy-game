@@ -47,6 +47,7 @@ npx http-server .   # or: python3 -m http.server
 - 16 skills: whirlwind, fireball, chain lightning, blink, multishot, shadow step, smoke bomb and more.
 - Enemies: slimes, bats, goblins, skeletons and bone archers. The Ogre King boss telegraphs ground pounds and summons minions.
 - Leveling, gold, hearts, mana orbs and potions. You can buy potions from Tobin the Trader.
+- The text uses the bundled [Pixelify Sans](https://github.com/eifetx/Pixelify-Sans) pixel font, so it works offline. The font is under the SIL Open Font License; see `fonts/OFL.txt`.
 
 ## Project layout
 
@@ -58,4 +59,5 @@ js/sprites.js   procedural pixel-art renderer (characters, monsters, tiles, icon
 js/world.js     map generation and collision
 js/game.js      game loop, combat, AI, HUD, dialog
 js/creator.js   character creation screen
+fonts/          Pixelify Sans font files and license
 ```

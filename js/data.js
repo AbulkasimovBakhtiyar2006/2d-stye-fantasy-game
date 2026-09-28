@@ -199,8 +199,8 @@ const ENEMY_TYPES = {
   slime:      { name: 'Slime',        hp: 22,  dmg: 6,  speed: 30, xp: 6,   gold: [1, 3],   r: 6,  hh: 5,  sight: 90,  atkRange: 8,  atkCd: 1.0, sprite: 'slime', color: 0 },
   blueSlime:  { name: 'Blue Slime',   hp: 45,  dmg: 9,  speed: 36, xp: 12,  gold: [2, 5],   r: 7,  hh: 5,  sight: 100, atkRange: 8,  atkCd: 1.0, sprite: 'slime', color: 1 },
   bat:        { name: 'Cave Bat',     hp: 16,  dmg: 5,  speed: 66, xp: 8,   gold: [1, 3],   r: 6,  hh: 12, sight: 130, atkRange: 8,  atkCd: 0.9, sprite: 'bat', fly: true },
-  goblin:     { name: 'Goblin',       hp: 40,  dmg: 9,  speed: 46, xp: 15,  gold: [3, 7],   r: 6,  hh: 9,  sight: 120, atkRange: 12, atkCd: 1.1, sprite: 'goblin' },
-  skeleton:   { name: 'Skeleton',     hp: 60,  dmg: 12, speed: 40, xp: 22,  gold: [4, 9],   r: 6,  hh: 9,  sight: 120, atkRange: 12, atkCd: 1.2, sprite: 'skeleton' },
-  skelArcher: { name: 'Bone Archer',  hp: 42,  dmg: 10, speed: 36, xp: 24,  gold: [4, 9],   r: 6,  hh: 9,  sight: 150, atkRange: 130, atkCd: 1.8, sprite: 'skelArcher', ranged: true },
-  ogreKing:   { name: 'Ogre King',    hp: 900, dmg: 22, speed: 34, xp: 500, gold: [80, 120], r: 13, hh: 20, sight: 170, atkRange: 22, atkCd: 1.4, sprite: 'ogre', boss: true },
+  goblin:     { name: 'Goblin',       hp: 40,  dmg: 9,  speed: 46, xp: 15,  gold: [3, 7],   r: 6,  hh: 12, sight: 120, atkRange: 12, atkCd: 1.1, sprite: 'goblin' },
+  skeleton:   { name: 'Skeleton',     hp: 60,  dmg: 12, speed: 40, xp: 22,  gold: [4, 9],   r: 6,  hh: 12, sight: 120, atkRange: 12, atkCd: 1.2, sprite: 'skeleton' },
+  skelArcher: { name: 'Bone Archer',  hp: 42,  dmg: 10, speed: 36, xp: 24,  gold: [4, 9],   r: 6,  hh: 12, sight: 150, atkRange: 130, atkCd: 1.8, sprite: 'skelArcher', ranged: true },
+  ogreKing:   { name: 'Ogre King',    hp: 900, dmg: 22, speed: 34, xp: 500, gold: [80, 120], r: 13, hh: 26, sight: 170, atkRange: 22, atkCd: 1.4, sprite: 'ogre', boss: true },
 };

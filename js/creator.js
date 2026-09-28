@@ -206,7 +206,7 @@ function drawPreview(dt) {
   const dir = [0, 2, 1, 3][Math.floor(Creator.previewT / 1.6) % 4];
   const fi = [1, 0, 2, 0][Math.floor(Creator.previewT * 6) % 4];
   const s = 8;
-  pctx.drawImage(Creator.sprite.frames[dir][fi], (c.width - CHAR_W * s) / 2, 244 - 24 * s, CHAR_W * s, CHAR_H * s);
+  pctx.drawImage(Creator.sprite.frames[dir][fi], (c.width - CHAR_W * s) / 2, 244 - 30 * s, CHAR_W * s, CHAR_H * s);
 }
 
 function initCreator() {

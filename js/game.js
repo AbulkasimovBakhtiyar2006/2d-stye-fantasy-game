@@ -5,7 +5,13 @@
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-const FONT = '"Press Start 2P", monospace';
+const FONT = '"Pixelify Sans", monospace';
+// Logical text sizes used throughout the code, mapped to crisp pixel sizes for Pixelify Sans.
+const FONT_PX = { 8: 14, 16: 22, 24: 32, 32: 44, 56: 84 };
+function fontFor(size) {
+  const px = FONT_PX[size] || Math.round(size * 1.6);
+  return `${size >= 16 ? 700 : 400} ${px}px ${FONT}`;
+}
 const VW = VIEW_W / SCALE; // view size in world pixels
 const VH = VIEW_H / SCALE;
 
@@ -155,7 +161,7 @@ function makePlayer(cfg, pos) {
     level: 1, xp: 0, xpNext: 40,
     atkCd: 0, skillCd: [0, 0], invuln: 0, lastHurt: -99, flash: 0, attackT: 0,
     buffs: { dmg: 0, invis: 0, poison: 0, critNext: false },
-    gold: 20, potions: 2, r: 5, hh: 10, dash: null,
+    gold: 20, potions: 2, r: 5, hh: 13, dash: null,
   };
   recalcPlayer(p);
   p.hp = p.maxHp;
@@ -183,14 +189,14 @@ function makeCompanion(def) {
     kind: 'companion', def, name: def.name, sprite, portrait: buildPortrait(sprite),
     x: pos.x, y: pos.y, homeX: pos.x, homeY: pos.y, dir: 0, anim: 0, moving: false,
     hp: def.hp, maxHp: def.hp, dmgMult: 1, recruited: false, downed: 0,
-    atkCd: 0, healCd: 0, specialCd: 5, stuck: 0, r: 5, hh: 10, flash: 0, slot: -1, attackT: 0,
+    atkCd: 0, healCd: 0, specialCd: 5, stuck: 0, r: 5, hh: 13, flash: 0, slot: -1, attackT: 0,
   };
 }
 
 function makeNpc(def) {
   const pos = G.world.findWalkable(def.home[0], def.home[1]);
   const sprite = buildCharacter(def.look);
-  return { kind: 'npc', id: def.id, name: def.name, sprite, portrait: buildPortrait(sprite), x: pos.x, y: pos.y, dir: 0, anim: 0, r: 5, hh: 10 };
+  return { kind: 'npc', id: def.id, name: def.name, sprite, portrait: buildPortrait(sprite), x: pos.x, y: pos.y, dir: 0, anim: 0, r: 5, hh: 13 };
 }
 
 function makeEnemy(type, x, y, spawn = null) {
@@ -320,8 +326,8 @@ function gainXp(n) {
       c.dmgMult = scale;
       if (!c.downed) c.hp = c.maxHp;
     }
-    addText(p.x, p.y - 34, 'LEVEL UP!', '#ffe040', 16, 1.8);
-    addText(p.x, p.y - 22, 'Lv.' + p.level, '#ffffff', 8, 1.8);
+    addText(p.x, p.y - 40, 'LEVEL UP!', '#ffe040', 16, 1.8);
+    addText(p.x, p.y - 28, 'Lv.' + p.level, '#ffffff', 8, 1.8);
     G.effects.push({ type: 'ring', x: p.x, y: p.y - 6, r0: 4, r1: 40, color: '#ffe040', t: 0, life: 0.6 });
     sparkle(p.x, p.y - 10, '#ffe040', 20);
   }
@@ -338,7 +344,7 @@ function hurtAlly(a, dmg, srcX, srcY) {
     p.invuln = 0.45;
     p.lastHurt = G.time;
     G.shake = Math.max(G.shake, 0.15);
-    addText(p.x, p.y - 26, '-' + final, '#ff5050', 8, 0.8);
+    addText(p.x, p.y - 32, '-' + final, '#ff5050', 8, 0.8);
     if (srcX !== undefined) {
       const d = Math.hypot(p.x - srcX, p.y - srcY) || 1;
       moveEntity(p, (p.x - srcX) / d * 6, (p.y - srcY) / d * 6);
@@ -354,11 +360,11 @@ function hurtAlly(a, dmg, srcX, srcY) {
     const final = Math.max(1, Math.round(dmg * (a.def.role === 'tank' ? 0.65 : 1)));
     a.hp -= final;
     a.flash = 0.15;
-    addText(a.x, a.y - 26, '-' + final, '#ff9090', 8, 0.7);
+    addText(a.x, a.y - 32, '-' + final, '#ff9090', 8, 0.7);
     if (a.hp <= 0) {
       a.hp = 0;
       a.downed = 12;
-      addText(a.x, a.y - 34, a.name + ' is down!', '#ff8080', 8, 1.5);
+      addText(a.x, a.y - 40, a.name + ' is down!', '#ff8080', 8, 1.5);
       burst(a.x, a.y - 8, '#ffffff', 10, 50, 0.6);
     }
   }
@@ -485,13 +491,13 @@ const SKILL_FN = {
     p.buffs.dmg = 8;
     G.partyBuff = 8;
     G.effects.push({ type: 'ring', x: p.x, y: cy(p), r0: 6, r1: 70, color: '#ff6040', t: 0, life: 0.5 });
-    addText(p.x, p.y - 34, 'BATTLE CRY!', '#ff6040', 8, 1.2);
+    addText(p.x, p.y - 40, 'BATTLE CRY!', '#ff6040', 8, 1.2);
     return true;
   },
   secondWind(p) {
     const amt = Math.round(p.maxHp * 0.4);
     p.hp = Math.min(p.maxHp, p.hp + amt);
-    addText(p.x, p.y - 28, '+' + amt, '#60ff80', 8, 1);
+    addText(p.x, p.y - 34, '+' + amt, '#60ff80', 8, 1);
     sparkle(p.x, p.y - 8, '#60ff80', 14);
     return true;
   },
@@ -566,7 +572,7 @@ const SKILL_FN = {
     const heal = (a, pct) => {
       const amt = Math.round(a.maxHp * pct);
       a.hp = Math.min(a.maxHp, a.hp + amt);
-      addText(a.x, a.y - 28, '+' + amt, '#60ff80', 8, 1);
+      addText(a.x, a.y - 34, '+' + amt, '#60ff80', 8, 1);
       sparkle(a.x, a.y - 8, '#60ff80', 10);
     };
     heal(p, 0.3);
@@ -615,7 +621,7 @@ const SKILL_FN = {
   poisonBlade(p) {
     p.buffs.poison = 10;
     sparkle(p.x, p.y - 8, '#80e040', 12);
-    addText(p.x, p.y - 30, 'POISON BLADE', '#80e040', 8, 1);
+    addText(p.x, p.y - 36, 'POISON BLADE', '#80e040', 8, 1);
     return true;
   },
 };
@@ -626,26 +632,26 @@ function useSkill(i) {
   if (!id) return;
   const s = SKILLS[id];
   if (p.skillCd[i] > 0) return;
-  if (p.mp < s.mp) { addText(p.x, p.y - 30, 'Not enough mana', '#80b0ff', 8, 0.8); p.skillCd[i] = 0.3; return; }
+  if (p.mp < s.mp) { addText(p.x, p.y - 36, 'Not enough mana', '#80b0ff', 8, 0.8); p.skillCd[i] = 0.3; return; }
   if (SKILL_FN[id](p)) {
     p.mp -= s.mp;
     p.skillCd[i] = s.cd;
     p.attackT = 0.15;
   } else {
-    addText(p.x, p.y - 30, 'No target', '#cccccc', 8, 0.8);
+    addText(p.x, p.y - 36, 'No target', '#cccccc', 8, 0.8);
     p.skillCd[i] = 0.3;
   }
 }
 
 function drinkPotion() {
   const p = G.player;
-  if (p.potions <= 0) { addText(p.x, p.y - 30, 'No potions', '#cccccc', 8, 0.8); return; }
+  if (p.potions <= 0) { addText(p.x, p.y - 36, 'No potions', '#cccccc', 8, 0.8); return; }
   if (p.hp >= p.maxHp && p.mp >= p.maxMp) return;
   p.potions--;
   const hp = Math.round(p.maxHp * 0.5), mp = Math.round(p.maxMp * 0.5);
   p.hp = Math.min(p.maxHp, p.hp + hp);
   p.mp = Math.min(p.maxMp, p.mp + mp);
-  addText(p.x, p.y - 28, '+' + hp, '#60ff80', 8, 1);
+  addText(p.x, p.y - 34, '+' + hp, '#60ff80', 8, 1);
   sparkle(p.x, p.y - 8, '#ff70a0', 12);
 }
 
@@ -669,7 +675,7 @@ function talkTo(t) {
         t.maxHp = Math.round(t.def.hp * scale);
         t.hp = t.maxHp;
         t.dmgMult = scale;
-        addText(t.x, t.y - 34, t.name + ' joined!', '#ff90d0', 8, 2);
+        addText(t.x, t.y - 40, t.name + ' joined!', '#ff90d0', 8, 2);
         sparkle(t.x, t.y - 10, '#ff90d0', 16);
         if (G.questStage === 0) G.questStage = 1;
       },
@@ -714,10 +720,10 @@ function talkTo(t) {
 
 function buyPotions(n, cost) {
   const p = G.player;
-  if (p.gold < cost) { addText(p.x, p.y - 30, 'Not enough gold', '#ffb060', 8, 1.2); return; }
+  if (p.gold < cost) { addText(p.x, p.y - 36, 'Not enough gold', '#ffb060', 8, 1.2); return; }
   p.gold -= cost;
   p.potions += n;
-  addText(p.x, p.y - 30, '+' + n + ' potion' + (n > 1 ? 's' : ''), '#ff70a0', 8, 1.2);
+  addText(p.x, p.y - 36, '+' + n + ' potion' + (n > 1 ? 's' : ''), '#ff70a0', 8, 1.2);
 }
 
 function interactTarget() {
@@ -832,7 +838,7 @@ function updateCompanion(c, dt) {
     c.moving = false;
     if (c.downed <= 0) {
       c.hp = Math.round(c.maxHp * 0.5);
-      addText(c.x, c.y - 30, c.name + ' is back!', '#90ff90', 8, 1.2);
+      addText(c.x, c.y - 36, c.name + ' is back!', '#90ff90', 8, 1.2);
       sparkle(c.x, c.y - 8, '#ffffff', 12);
     }
     return;
@@ -856,7 +862,7 @@ function updateCompanion(c, dt) {
     if (worst) {
       const amt = Math.round(16 + 4 * p.level);
       worst.hp = Math.min(worst.maxHp, worst.hp + amt);
-      addText(worst.x, worst.y - 28, '+' + amt, '#80ffa0', 8, 1);
+      addText(worst.x, worst.y - 34, '+' + amt, '#80ffa0', 8, 1);
       sparkle(worst.x, worst.y - 8, '#fff8a0', 10);
       G.effects.push({ type: 'bolt', x1: c.x, y1: cy(c), x2: worst.x, y2: cy(worst), t: 0, life: 0.2, color: '#fff8c0' });
       c.healCd = 3.2;
@@ -883,7 +889,7 @@ function updateCompanion(c, dt) {
         G.effects.push({ type: 'ring', x: c.x, y: c.y - 4, r0: 4, r1: 44, color: '#ffc080', t: 0, life: 0.4, width: 3 });
         G.shake = Math.max(G.shake, 0.15);
         aoe(c.x, cy(c), 44, (e, nx, ny) => damageEnemy(e, dmgOf(1.4), { stun: 0.9, knock: 140, ax: nx, ay: ny }));
-        addText(c.x, c.y - 32, 'Ground Slam!', '#ffc080', 8, 1);
+        addText(c.x, c.y - 38, 'Ground Slam!', '#ffc080', 8, 1);
       }
     } else {
       const want = Math.min(c.def.range * 0.7, 90);
@@ -905,7 +911,7 @@ function updateCompanion(c, dt) {
           burst(tx, ty, '#ff9030', 20, 90, 0.6);
           burst(tx, ty, '#ffe060', 10, 60, 0.5);
           aoe(tx, ty, 34, (e, nx, ny) => damageEnemy(e, dmgOf(2.4), { knock: 110, ax: nx, ay: ny, color: '#ffa040' }));
-          addText(c.x, c.y - 32, 'Inferno!', '#ff9040', 8, 1);
+          addText(c.x, c.y - 38, 'Inferno!', '#ff9040', 8, 1);
         } else if (role === 'ranged') {
           c.specialCd = 6;
           const base = Math.atan2(cy(target) - cy(c), target.x - c.x);
@@ -1070,7 +1076,7 @@ function updateBoss(e, target, d, dt) {
     e.sx = target.x; e.sy = target.y;
     e.attackT = 1.0;
     G.effects.push({ type: 'tele', x: e.sx, y: e.sy, r: 50, t: 0, life: 1.0 });
-    addText(e.x, e.y - 50, 'GROUND POUND!', '#ff8040', 8, 1);
+    addText(e.x, e.y - 64, 'GROUND POUND!', '#ff8040', 8, 1);
     return true;
   }
   if (e.summonT <= 0) {
@@ -1082,7 +1088,7 @@ function updateBoss(e, target, d, dt) {
       G.enemies.push(s);
       burst(pos.x, pos.y - 4, '#80e060', 10, 60, 0.5);
     }
-    addText(e.x, e.y - 50, 'Minions, attack!', '#ff8040', 8, 1.2);
+    addText(e.x, e.y - 64, 'Minions, attack!', '#ff8040', 8, 1.2);
   }
   return false;
 }
@@ -1160,10 +1166,10 @@ function updatePickups(dt) {
       k.y += (p.y - 4 - k.y) * Math.min(1, s * 1.5);
     }
     if (k.t > 0.4 && d < 8) {
-      if (k.type === 'gold') { p.gold += k.amount; addText(p.x, p.y - 26, '+' + k.amount + 'g', '#ffd040', 8, 0.7); }
-      if (k.type === 'heart') { p.hp = Math.min(p.maxHp, p.hp + k.amount); addText(p.x, p.y - 26, '+' + k.amount, '#60ff80', 8, 0.7); }
-      if (k.type === 'mana') { p.mp = Math.min(p.maxMp, p.mp + k.amount); addText(p.x, p.y - 26, '+' + k.amount + ' MP', '#80b0ff', 8, 0.7); }
-      if (k.type === 'potion') { p.potions += k.amount; addText(p.x, p.y - 26, '+1 potion', '#ff70a0', 8, 1); }
+      if (k.type === 'gold') { p.gold += k.amount; addText(p.x, p.y - 32, '+' + k.amount + 'g', '#ffd040', 8, 0.7); }
+      if (k.type === 'heart') { p.hp = Math.min(p.maxHp, p.hp + k.amount); addText(p.x, p.y - 32, '+' + k.amount, '#60ff80', 8, 0.7); }
+      if (k.type === 'mana') { p.mp = Math.min(p.maxMp, p.mp + k.amount); addText(p.x, p.y - 32, '+' + k.amount + ' MP', '#80b0ff', 8, 0.7); }
+      if (k.type === 'potion') { p.potions += k.amount; addText(p.x, p.y - 32, '+1 potion', '#ff70a0', 8, 1); }
       continue;
     }
     if (k.t < 40) keep.push(k);
@@ -1215,7 +1221,7 @@ function respawnPlayer() {
   G.projectiles = [];
   G.state = 'play';
   updateCamera(true);
-  addText(p.x, p.y - 30, 'You wake in Emberbrook...', '#ffffff', 8, 2);
+  addText(p.x, p.y - 36, 'You wake in Emberbrook...', '#ffffff', 8, 2);
 }
 
 // ---------------------------------------------------------------------------
@@ -1275,13 +1281,17 @@ function update(dt) {
 // ---------------------------------------------------------------------------
 // Rendering
 // ---------------------------------------------------------------------------
+// This font's subset has no 'fi'/'fl' ligature glyphs, so break them up with a zero-width non-joiner.
+const noLig = (str) => String(str).replace(/f(?=[il])/g, 'f\u200C');
+
 function drawText(str, x, y, size = 8, color = '#fff', align = 'left', shadow = true) {
-  ctx.font = `${size}px ${FONT}`;
+  str = noLig(str);
+  ctx.font = fontFor(size);
   ctx.textAlign = align;
   ctx.textBaseline = 'top';
   if (shadow) {
     ctx.fillStyle = '#1b1426';
-    const o = Math.max(1, Math.round(size / 8));
+    const o = size >= 32 ? 4 : size >= 16 ? 2 : 1;
     ctx.fillText(str, x + o, y + o);
   }
   ctx.fillStyle = color;
@@ -1289,7 +1299,7 @@ function drawText(str, x, y, size = 8, color = '#fff', align = 'left', shadow = 
 }
 
 function wrapText(str, maxW, size) {
-  ctx.font = `${size}px ${FONT}`;
+  ctx.font = fontFor(size);
   const words = str.split(' ');
   const lines = [];
   let cur = '';
@@ -1378,7 +1388,7 @@ function drawEntity(e) {
       }
     }
     if (!e.boss && e.hp < e.maxHp) {
-      const top = e.d.sprite === 'slime' ? e.y - 16 : e.d.sprite === 'bat' ? e.y - 22 : e.y - 26;
+      const top = e.d.sprite === 'slime' ? e.y - 16 : e.d.sprite === 'bat' ? e.y - 22 : e.y - 33;
       ctx.fillStyle = '#1b1426';
       ctx.fillRect(Math.round(e.x) - 8, Math.round(top), 16, 3);
       ctx.fillStyle = '#e04040';
@@ -1393,7 +1403,7 @@ function drawEntity(e) {
     ctx.fillStyle = '#ffffff';
     const zt = (G.time * 2) % 1;
     ctx.globalAlpha = 1 - zt;
-    ctx.fillRect(Math.round(e.x + 4 + zt * 4), Math.round(e.y - 26 - zt * 8), 2, 1);
+    ctx.fillRect(Math.round(e.x + 4 + zt * 4), Math.round(e.y - 32 - zt * 8), 2, 1);
     ctx.globalAlpha = 1;
     return;
   }
@@ -1586,7 +1596,7 @@ function drawWorld() {
     const tgt = G.state === 'play' ? interactTarget() : null;
     for (const t of G.npcs.concat(G.companions.filter((c) => !c.recruited))) {
       if (!inView(t)) continue;
-      const [x, y] = toScreen(t.x, t.y - 30);
+      const [x, y] = toScreen(t.x, t.y - 36);
       const bob = Math.sin(G.time * 4) * 3;
       if (t === tgt) {
         drawText('[E] Talk', x, y - 18, 8, '#ffe070', 'center');
@@ -1627,10 +1637,10 @@ function drawHUD() {
   // --- player panel
   panel(10, 10, 330, 104);
   drawPortrait(p.portrait, 22, 22, 4);
-  drawText(p.name, 98, 22, 16, '#ffffff');
-  drawText(`Lv.${p.level} ${CLASSES[p.cls].name}`, 98, 44, 8, '#e8d8b0');
-  bar(98, 60, 226, 12, p.hp / p.maxHp, '#e04050');
-  drawText(`${Math.ceil(p.hp)}/${p.maxHp}`, 211, 62, 8, '#ffffff', 'center');
+  drawText(p.name, 98, 16, 16, '#ffffff');
+  drawText(`Lv.${p.level} ${CLASSES[p.cls].name}`, 98, 40, 8, '#e8d8b0');
+  bar(98, 60, 226, 14, p.hp / p.maxHp, '#e04050');
+  drawText(`${Math.ceil(p.hp)}/${p.maxHp}`, 211, 60, 8, '#ffffff', 'center');
   bar(98, 80, 226, 8, p.mp / p.maxMp, '#4080ff');
   bar(98, 96, 226, 4, p.xp / p.xpNext, '#f0c830');
   // buffs
@@ -1641,19 +1651,20 @@ function drawHUD() {
   if (p.buffs.poison > 0) buffs.push(['PSN', '#80e040', p.buffs.poison]);
   if (p.buffs.critNext) buffs.push(['CRIT', '#ffe040', 0]);
   for (const [label, col, t] of buffs) {
-    drawText(label + (t ? ' ' + Math.ceil(t) : ''), bx, 120, 8, col);
+    drawText(label + (t ? ' ' + Math.ceil(t) : ''), bx, 118, 8, col);
     bx += 90;
   }
 
   // --- party
   let py = 140;
   for (const c of party()) {
-    panel(10, py, 200, 44, 0.75);
+    panel(10, py, 236, 44, 0.75);
     drawPortrait(c.portrait, 18, py + 8, 2, c.downed > 0 ? '#804040' : '#ff90d0');
-    drawText(c.name, 58, py + 9, 8, c.downed > 0 ? '#a08080' : '#ffffff');
-    drawText(c.def.title, 58 + c.name.length * 8 + 8, py + 9, 8, '#b0a0c0');
-    if (c.downed > 0) drawText('DOWN ' + Math.ceil(c.downed), 58, py + 24, 8, '#ff7070');
-    else bar(58, py + 24, 136, 7, c.hp / c.maxHp, '#e04050');
+    drawText(c.name, 58, py + 6, 8, c.downed > 0 ? '#a08080' : '#ffffff');
+    ctx.font = fontFor(8);
+    drawText(c.def.title, 58 + ctx.measureText(c.name).width + 8, py + 6, 8, '#b0a0c0');
+    if (c.downed > 0) drawText('DOWN ' + Math.ceil(c.downed), 58, py + 22, 8, '#ff7070');
+    else bar(58, py + 26, 172, 7, c.hp / c.maxHp, '#e04050');
     py += 48;
   }
 
@@ -1722,7 +1733,7 @@ function drawHUD() {
   else if (!G.bossDefeated) quest = [`Allies: ${party().length}/4`, 'Defeat the Ogre King', 'in the north-east ruins.'];
   else quest = ['The Ogre King is slain!', 'Explore freely.'];
   drawText('QUEST', mx, my + mh + 30, 8, '#ffe070');
-  quest.forEach((q, i) => drawText(q, mx, my + mh + 46 + i * 14, 8, '#ffffff'));
+  quest.forEach((q, i) => drawText(q, mx, my + mh + 48 + i * 17, 8, '#ffffff'));
 
   // --- boss bar
   const b = G.boss;
@@ -1743,13 +1754,13 @@ function drawDialog() {
   drawText(title, x + 140, y + 20, 16, d.speaker.kind === 'companion' ? '#ff90d0' : '#ffe070');
   const text = d.lines[d.idx].slice(0, Math.floor(d.shown));
   const lines = wrapText(text, w - 170, 8);
-  lines.forEach((l, i) => drawText(l, x + 140, y + 50 + i * 16, 8, '#ffffff'));
+  lines.forEach((l, i) => drawText(l, x + 140, y + 52 + i * 19, 8, '#ffffff'));
   const lastLine = d.idx === d.lines.length - 1;
   const done = d.shown >= d.lines[d.idx].length;
   if (lastLine && d.choices && done) {
     d.choices.forEach((c, i) => {
       const sel = i === d.sel;
-      drawText((sel ? '> ' : '  ') + c.label, x + 140, y + 80 + i * 16, 8, sel ? '#ffe070' : '#c0b0d0');
+      drawText((sel ? '> ' : '   ') + c.label, x + 140, y + 76 + i * 19, 8, sel ? '#ffe070' : '#c0b0d0');
     });
   } else if (done && Math.floor(G.time * 3) % 2) {
     drawText('E >', x + w - 24, y + h - 26, 8, '#ffe070', 'right');
@@ -1793,10 +1804,10 @@ function drawPause() {
     pyy += 44;
   }
   // controls
-  y = VIEW_H - 176;
+  y = VIEW_H - 200;
   drawText('CONTROLS', 620, y, 8, '#ffe070');
   const ctl = ['WASD / Arrows  Move', 'Space / J      Attack', 'Q / K          Skill 1', 'R / L          Skill 2', 'F              Potion', 'E              Talk', 'Esc / P        Pause'];
-  ctl.forEach((c, i) => drawText(c, 620, y + 16 + i * 13, 8, '#ffffff'));
+  ctl.forEach((c, i) => { const [k, a] = c.split(/\s{2,}/); drawText(k, 620, y + 18 + i * 16, 8, '#ffffff'); drawText(a, 740, y + 18 + i * 16, 8, '#c0b0d0'); });
   drawText('Press Esc to resume', VIEW_W / 2, VIEW_H - 64, 8, '#ffe070', 'center');
 }
 
@@ -1814,9 +1825,9 @@ function drawTitle() {
   ctx.fillStyle = 'rgba(15,8,30,0.55)';
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
 
-  drawText('EMBERFALL', VIEW_W / 2 + 4, 64, 56, '#6a2018', 'center', false);
-  drawText('EMBERFALL', VIEW_W / 2, 60, 56, '#ffb040', 'center', false);
-  drawText('A Pixel Fantasy Tale', VIEW_W / 2, 136, 16, '#ffe8c0', 'center');
+  drawText('EMBERFALL', VIEW_W / 2 + 5, 35, 56, '#6a2018', 'center', false);
+  drawText('EMBERFALL', VIEW_W / 2, 30, 56, '#ffb040', 'center', false);
+  drawText('A Pixel Fantasy Tale', VIEW_W / 2, 122, 16, '#ffe8c0', 'center');
 
   // line-up: the hero with the four heroines
   if (!G.titleSprites) {
@@ -1833,13 +1844,13 @@ function drawTitle() {
   G.titleSprites.forEach((sp, i) => {
     const bob = Math.floor(G.time * 4 + i) % 2;
     const x = startX + i * spacing - (CHAR_W * s) / 2;
-    const y = 190 + (i === 2 ? -10 : 0) + bob * s;
+    const y = 170 + (i === 2 ? -10 : 0) + bob * s;
     ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.fillRect(x + 8 * s, 190 + 23 * s + (i === 2 ? -10 : 0), 10 * s, 2 * s);
+    ctx.fillRect(x + 8 * s, 170 + 28 * s + (i === 2 ? -10 : 0), 10 * s, 2 * s);
     ctx.drawImage(sp.frames[0][0], x, y, CHAR_W * s, CHAR_H * s);
   });
   const names = ['Aria', 'Luna', 'You', 'Brynn', 'Selene'];
-  names.forEach((nm, i) => drawText(nm, startX + i * spacing, 350 + (i === 2 ? -10 : 0), 8, i === 2 ? '#ffe070' : '#ff90d0', 'center'));
+  names.forEach((nm, i) => drawText(nm, startX + i * spacing, 330 + (i === 2 ? -10 : 0), 8, i === 2 ? '#ffe070' : '#ff90d0', 'center'));
 
   if (Math.floor(G.time * 2) % 2) drawText('Press ENTER to begin', VIEW_W / 2, 420, 16, '#ffffff', 'center');
   drawText('WASD move · Space attack · Q/R skills · E talk', VIEW_W / 2, 480, 8, '#c0b0d0', 'center');
@@ -1897,5 +1908,5 @@ function startGame(cfg) {
 // Expose for the creator & debugging
 window.EMBERFALL = { G, startGame };
 
-document.fonts && document.fonts.load(`16px ${FONT}`).catch(() => {});
+if (document.fonts) { document.fonts.load(fontFor(8)).catch(() => {}); document.fonts.load(fontFor(16)).catch(() => {}); }
 requestAnimationFrame(frame);

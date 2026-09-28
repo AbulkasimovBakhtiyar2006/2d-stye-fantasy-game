@@ -1,3 +1,17 @@
+/* Pixelify Sans - SIL Open Font License, see fonts/OFL.txt */
+@font-face {
+  font-family: "Pixelify Sans";
+  src: url("fonts/PixelifySans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pixelify Sans";
+  src: url("fonts/PixelifySans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -5,7 +19,9 @@ html, body {
   height: 100%;
   background: #0b0614;
   color: #f4ecd8;
-  font-family: "Press Start 2P", monospace;
+  font-family: "Pixelify Sans", monospace;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0;
   overflow: hidden;
 }
 
@@ -52,18 +68,19 @@ html, body {
 
 .cr-inner h1 {
   margin: 0 0 16px;
-  font-size: 22px;
+  font-size: 38px;
+  font-weight: 700;
   text-align: center;
   color: #ffb040;
   text-shadow: 3px 3px 0 #6a2018;
 }
 
 .cr-inner h2 {
-  font-size: 12px;
+  font-size: 18px;
   color: #ffe070;
   margin: 18px 0 8px;
 }
-.cr-inner h2 small { font-size: 8px; color: #b0a0c0; margin-left: 8px; }
+.cr-inner h2 small { font-size: 13px; color: #b0a0c0; margin-left: 8px; }
 
 .cr-grid {
   display: grid;
@@ -87,18 +104,18 @@ html, body {
 }
 #cr-summary {
   text-align: center;
-  font-size: 10px;
+  font-size: 15px;
   line-height: 1.8;
   margin: 10px 0;
 }
-#cr-summary em { color: #ffe070; font-style: normal; font-size: 8px; }
+#cr-summary em { color: #ffe070; font-style: normal; font-size: 13px; }
 
 .stat {
   display: grid;
-  grid-template-columns: 44px 1fr 40px;
+  grid-template-columns: 48px 1fr 44px;
   align-items: center;
   gap: 8px;
-  font-size: 8px;
+  font-size: 13px;
   margin: 6px 0;
 }
 .stat b { text-align: right; font-weight: normal; }
@@ -111,11 +128,11 @@ html, body {
   align-items: center;
   margin-bottom: 10px;
 }
-.row label { font-size: 10px; color: #e8d8b0; }
+.row label { font-size: 15px; color: #e8d8b0; }
 
 #cr-name {
   font-family: inherit;
-  font-size: 12px;
+  font-size: 18px;
   padding: 8px 10px;
   background: #0e0a16;
   color: #fff;
@@ -144,7 +161,7 @@ button {
 }
 
 .chip {
-  font-size: 9px;
+  font-size: 14px;
   padding: 8px 10px;
   background: #2a1f3a;
   border: 3px solid #6a5040;
@@ -166,10 +183,10 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 8px;
+  font-size: 13px;
   line-height: 1.6;
 }
-.card b { font-size: 10px; color: #fff; font-weight: normal; }
+.card b { font-size: 16px; color: #fff; font-weight: 700; }
 .card span { color: #c0b0d0; }
 .card em { color: #ffe070; font-style: normal; }
 .card:hover { border-color: #b09070; }
@@ -185,7 +202,7 @@ button {
   margin-top: 20px;
 }
 .cr-actions button {
-  font-size: 12px;
+  font-size: 18px;
   padding: 12px 18px;
   background: #2a1f3a;
   border: 3px solid #6a5040;
@@ -200,3 +217,5 @@ button {
   .cr-preview { position: static; }
   .row { grid-template-columns: 1fr; gap: 6px; }
 }
+
+button, input { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; }

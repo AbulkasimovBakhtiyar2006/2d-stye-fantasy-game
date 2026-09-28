@@ -126,10 +126,10 @@ function weaponIcon(id, scale = 4) {
 // ---------------------------------------------------------------------------
 // Humanoid characters
 // ---------------------------------------------------------------------------
-// Frame layout: 26x28 canvas, figure drawn in a 16x20 box offset by (5, 5).
+// Frame layout: 26x31 canvas, figure drawn in a 16x25 box offset by (5, 5).
 // Directions: 0 = down, 1 = up, 2 = left, 3 = right. Frames: 0 idle, 1/2 walk.
 
-const CHAR_W = 26, CHAR_H = 28, CHAR_OX = 5, CHAR_OY = 5;
+const CHAR_W = 26, CHAR_H = 31, CHAR_OX = 5, CHAR_OY = 5;
 
 function normalizeLook(look) {
   const L = Object.assign({}, look);
@@ -160,72 +160,82 @@ function drawFigure(ctx, L, dir, f) {
   const style = L.hairStyle;
 
   // ---------------- back layer ----------------
+  // Body rows: head 0-8, neck 9, torso 10-15, belt 16, hips 17, legs 18-22, boots 23-24.
   if (L.gear === 'cape') {
-    if (dir === 0) r(4, 10, 8, 7, L.cape);
-    if (dir === 2) { r(9, 10, 3, 7, L.cape); p(12, 15, L.cape); p(12, 16, L.cape); }
+    if (dir === 0) r(4, 10, 8, 13, L.cape);
+    if (dir === 2) { r(9, 10, 3, 13, L.cape); r(12, 19, 1, 4, L.cape); }
   }
   if (style === 'long') {
-    if (dir === 0) { r(4, 4, 1, 9, H); r(11, 4, 1, 9, H); r(5, 8, 6, 2, Hs); }
-    if (dir === 2) { r(9, 4, 3, 9, H); r(11, 6, 1, 6, Hs); }
+    if (dir === 0) { r(4, 4, 1, 12, H); r(11, 4, 1, 12, H); r(5, 8, 6, 2, Hs); }
+    if (dir === 2) { r(9, 4, 3, 12, H); r(11, 6, 1, 9, Hs); }
   }
   if (style === 'braid' && dir === 2) {
-    for (let y = 7; y <= 12; y++) r(10, y, 2, 1, y % 2 ? H : Hs);
-    p(10, 13, gold);
+    for (let y = 7; y <= 15; y++) r(10, y, 2, 1, y % 2 ? H : Hs);
+    p(10, 16, gold);
   }
-  if (L.scarf && L.gear === 'scarf' && dir === 2) { r(10, 9, 2, 1, L.scarf); p(12, 10, L.scarf); p(12, 11, shade(L.scarf, -0.2)); }
+  if (L.scarf && L.gear === 'scarf' && dir === 2) { r(10, 9, 2, 1, L.scarf); r(12, 10, 1, 3, L.scarf); p(12, 13, shade(L.scarf, -0.2)); }
 
   // ---------------- legs ----------------
   if (L.gear === 'robe') {
     if (dir === 2) {
-      r(5, 14, 6, 4, O); r(5, 17, 6, 1, Os);
-      if (f === 1) { r(3, 18, 3, 1, B); } else if (f === 2) { r(8, 18, 3, 1, B); } else { r(5, 18, 3, 1, B); }
+      r(5, 16, 6, 8, O); r(5, 23, 6, 1, Os); r(9, 16, 2, 7, Os);
+      if (f === 1) r(3, 24, 3, 1, B); else if (f === 2) r(8, 24, 3, 1, B); else r(5, 24, 3, 1, B);
     } else {
-      r(4, 14, 8, 4, O); r(4, 17, 8, 1, Os);
-      if (dir === 0) r(10, 14, 2, 3, Os);
-      if (f !== 2) r(5, 18, 2, 1, B);
-      if (f !== 1) r(9, 18, 2, 1, B);
+      r(4, 16, 8, 8, O); r(4, 23, 8, 1, Os);
+      if (dir === 0) r(10, 16, 2, 7, Os);
+      if (f !== 2) r(5, 24, 2, 1, B);
+      if (f !== 1) r(9, 24, 2, 1, B);
     }
   } else if (dir === 2) {
-    r(6, 15, 4, 1, P);
+    r(6, 17, 4, 1, P);
     if (f === 0) {
-      r(7, 16, 2, 2, P); r(6, 18, 3, 1, B);
+      r(7, 18, 2, 5, P); r(6, 23, 3, 2, B);
     } else {
-      const front = f === 1 ? P : shade(P, -0.25), back = f === 1 ? shade(P, -0.25) : P;
-      r(9, 16, 2, 2, back); r(9, 18, 2, 1, shade(B, -0.2));
-      r(5, 16, 2, 2, front); r(4, 18, 3, 1, B);
+      const Pd = shade(P, -0.25);
+      const front = f === 1 ? P : Pd, back = f === 1 ? Pd : P;
+      r(8, 18, 2, 2, back); r(9, 20, 2, 3, back); r(9, 23, 3, 2, shade(B, -0.2));
+      r(6, 18, 2, 2, front); r(5, 20, 2, 3, front); r(4, 23, 3, 2, B);
     }
   } else {
-    r(5, 15, 6, 1, P);
+    r(5, 17, 6, 1, P);
+    r(7, 18, 2, 1, shade(P, -0.2));
     const ll = f === 1 ? 1 : 0, rl = f === 2 ? 1 : 0;
-    r(5, 16, 2, 2 - ll, P); r(5, 18 - ll, 2, 1, B);
-    r(9, 16, 2, 2 - rl, P); r(9, 18 - rl, 2, 1, B);
+    r(5, 18, 2, 5 - ll, P); r(5, 23 - ll, 2, 2, B);
+    r(9, 18, 2, 5 - rl, P); r(9, 23 - rl, 2, 2, B);
+    if (dir === 0) { r(10, 18, 1, 5 - rl, shade(P, -0.2)); }
   }
 
   // ---------------- torso & arms ----------------
   if (dir === 2) {
-    r(6, 10, 4, 4, O); r(9, 10, 1, 4, Os);
-    if (L.gear !== 'robe') { r(6, 14, 4, 1, belt); }
-    else r(6, 13, 4, 1, P);
-    if (L.skeleton) { p(7, 11, dark); p(7, 13, dark); }
+    r(6, 10, 4, 6, O); r(9, 10, 1, 6, Os);
+    if (L.gear !== 'robe') r(6, 16, 4, 1, belt);
+    else r(6, 15, 4, 1, P);
+    if (L.skeleton) { p(7, 11, dark); p(7, 13, dark); p(7, 15, dark); }
     // arm swings with the walk cycle
-    const hx = f === 1 ? 6 : f === 2 ? 9 : 7;
+    const sw = f === 1 ? -1 : f === 2 ? 1 : 0;
     r(7, 10, 2, 3, Os);
-    if (L.gear === 'armor') r(7, 10, 2, 1, '#c8ccd8');
-    r(hx, 13, 2, 1, S);
-    if (hx !== 7) { r(hx, 12, 2, 1, Os); }
+    r(7 + sw, 13, 2, 2, Os);
+    r(7 + sw * 2, 15, 2, 1, S);
+    if (L.gear === 'armor') r(7, 10, 2, 2, '#c8ccd8');
   } else {
-    r(5, 10, 6, 4, O);
-    if (dir === 0) { r(10, 10, 1, 4, Os); r(6, 11, 2, 1, Ol); }
-    if (L.gear === 'robe') { r(5, 13, 6, 1, P); if (dir === 0) p(7, 13, gold); }
-    else { r(5, 14, 6, 1, belt); if (dir === 0) r(7, 14, 2, 1, gold); }
-    if (L.skeleton) {
-      if (dir === 0) { r(6, 11, 4, 1, dark); r(6, 13, 4, 1, dark); p(7, 12, dark); p(8, 12, dark); }
-      else r(7, 10, 2, 4, dark);
+    r(5, 10, 6, 6, O);
+    if (dir === 0) { r(10, 10, 1, 6, Os); r(6, 11, 2, 1, Ol); }
+    if (L.female) {
+      // a slightly narrower waist
+      ctx.clearRect(5 + CHAR_OX, 13 + CHAR_OY, 1, 3);
+      ctx.clearRect(10 + CHAR_OX, 13 + CHAR_OY, 1, 3);
+      if (dir === 0) r(9, 13, 1, 3, Os);
     }
-    r(4, 10, 1, 3, Os); r(11, 10, 1, 3, Os);
-    p(4, 13, S); p(11, 13, S);
+    if (L.gear === 'robe') { if (L.female) r(6, 15, 4, 1, P); else r(5, 15, 6, 1, P); if (dir === 0) p(7, 15, gold); }
+    else { if (L.female) r(6, 16, 4, 1, belt); else r(5, 16, 6, 1, belt); if (dir === 0) r(7, 16, 2, 1, gold); }
+    if (L.skeleton) {
+      if (dir === 0) { r(6, 11, 4, 1, dark); r(6, 13, 4, 1, dark); r(7, 12, 2, 1, dark); r(7, 14, 2, 2, dark); }
+      else r(7, 10, 2, 6, dark);
+    }
+    r(4, 10, 1, 5, Os); r(11, 10, 1, 5, Os);
+    p(4, 15, S); p(11, 15, S);
     if (L.gear === 'armor') { r(4, 10, 1, 2, '#c8ccd8'); r(11, 10, 1, 2, '#c8ccd8'); p(4, 10, '#eef0f8'); }
-    if (L.gear === 'cape' && dir === 1) { r(4, 10, 8, 7, L.cape); r(4, 16, 8, 1, shade(L.cape, -0.25)); }
+    if (L.gear === 'cape' && dir === 1) { r(4, 10, 8, 13, L.cape); r(4, 22, 8, 1, shade(L.cape, -0.25)); r(7, 12, 1, 9, shade(L.cape, -0.15)); }
     if (L.gear === 'cape' && dir === 0) { p(5, 10, L.cape); p(10, 10, L.cape); }
   }
 
@@ -271,8 +281,8 @@ function drawFigure(ctx, L, dir, f) {
         r(4, 2, 8, 2, H); r(4, 4, 3, 1, H); r(8, 4, 4, 1, H); r(6, 2, 2, 1, Hl); break;
       case 'braid':
         r(4, 2, 8, 2, H); r(4, 4, 2, 1, H); r(9, 4, 3, 1, H); r(4, 5, 1, 2, H); r(11, 4, 1, 3, H);
-        for (let y = 7; y <= 12; y++) p(11, y, y % 2 ? H : Hs);
-        p(11, 13, gold); r(6, 2, 2, 1, Hl); break;
+        for (let y = 7; y <= 15; y++) p(11, y, y % 2 ? H : Hs);
+        p(11, 16, gold); r(6, 2, 2, 1, Hl); break;
       case 'bob':
         r(4, 2, 8, 3, H); r(4, 4, 3, 1, H); r(8, 4, 4, 1, H); r(4, 5, 1, 4, H); r(11, 5, 1, 4, H); r(6, 2, 2, 1, Hl); break;
     }
@@ -286,11 +296,11 @@ function drawFigure(ctx, L, dir, f) {
       case 'shaggy':
         r(4, 2, 8, 7, H); r(6, 2, 3, 1, Hl); r(5, 8, 6, 1, Hs); break;
       case 'long':
-        r(4, 2, 8, 11, H); r(6, 3, 2, 1, Hl); r(7, 6, 1, 6, Hs); r(4, 12, 8, 1, Hs); break;
+        r(4, 2, 8, 14, H); r(6, 3, 2, 1, Hl); r(7, 6, 1, 9, Hs); r(4, 15, 8, 1, Hs); break;
       case 'braid':
         r(5, 2, 6, 6, H); r(4, 3, 1, 4, H); r(11, 3, 1, 4, H); r(6, 2, 3, 1, Hl);
-        for (let y = 8; y <= 13; y++) r(7, y, 2, 1, y % 2 ? H : Hs);
-        r(7, 14, 2, 1, gold); break;
+        for (let y = 8; y <= 16; y++) r(7, y, 2, 1, y % 2 ? H : Hs);
+        r(7, 17, 2, 1, gold); break;
       case 'bob':
         r(4, 2, 8, 7, H); r(6, 2, 3, 1, Hl); r(4, 8, 8, 1, Hs); break;
     }
@@ -331,7 +341,7 @@ function drawFigure(ctx, L, dir, f) {
   if (L.gear === 'scarf') {
     const sc = L.scarf, scs = shade(L.scarf, -0.2);
     if (dir === 0) { r(5, 8, 6, 2, sc); r(5, 9, 6, 1, scs); }
-    if (dir === 1) { r(5, 8, 6, 2, sc); r(9, 10, 1, 3, scs); }
+    if (dir === 1) { r(5, 8, 6, 2, sc); r(9, 10, 1, 5, scs); }
     if (dir === 2) { r(5, 8, 5, 2, sc); p(5, 9, scs); }
   }
   if (L.hat === 'witch') {
@@ -354,9 +364,9 @@ function drawFigure(ctx, L, dir, f) {
   if (L.weapon && WEAPON_ART[L.weapon]) {
     const art = WEAPON_ART[L.weapon];
     const ww = art[0].length, wh = art.length;
-    let cx = 12, bottom = 15;
-    if (dir === 1) { cx = 3; bottom = 14; }
-    if (dir === 2) { cx = 4; bottom = 15; }
+    let cx = 12, bottom = 17;
+    if (dir === 1) { cx = 3; bottom = 16; }
+    if (dir === 2) { cx = 4; bottom = 17; }
     drawPixelMap(ctx, art, WEAPON_PAL, cx - Math.floor(ww / 2) + CHAR_OX, bottom - wh + 1 + CHAR_OY);
   }
 }
@@ -373,7 +383,7 @@ function buildCharacter(look) {
     }
   }
   for (let f = 0; f < 3; f++) frames[3][f] = mirrorCanvas(frames[2][f]);
-  return { frames, w: CHAR_W, h: CHAR_H, ox: 13, oy: 24, flash: new Map() };
+  return { frames, w: CHAR_W, h: CHAR_H, ox: 13, oy: 30, flash: new Map() };
 }
 
 // Head-only portrait (for HUD / dialog)
